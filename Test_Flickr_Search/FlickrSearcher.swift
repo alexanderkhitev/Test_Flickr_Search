@@ -89,60 +89,64 @@ class Flickr {
     
     let searchURL = flickrSearchURLForSearchTerm(searchTerm)
     let searchRequest = NSURLRequest(URL: searchURL)
-    NSURLConnection.sendAsynchronousRequest(searchRequest, queue: processingQueue) {response, data, error in
-      if error != nil {
-        completion(results: nil,error: error)
-        return
-      }
-      
-      var JSONError : NSError?
-      let resultsDictionary = NSJSONSerialization.JSONObjectWithData(data, options:NSJSONReadingOptions(0), error: &JSONError) as? NSDictionary
-      if JSONError != nil {
-        completion(results: nil, error: JSONError)
-        return
-      }
-      
-      switch (resultsDictionary!["stat"] as! String) {
-      case "ok":
-        print("Results processed OK")
-      case "fail":
-        let APIError = NSError(domain: "FlickrSearch", code: 0, userInfo: [NSLocalizedFailureReasonErrorKey:resultsDictionary!["message"]!])
-        completion(results: nil, error: APIError)
-        return
-      default:
-        let APIError = NSError(domain: "FlickrSearch", code: 0, userInfo: [NSLocalizedFailureReasonErrorKey:"Uknown API response"])
-        completion(results: nil, error: APIError)
-        return
-      }
-      
-      let photosContainer = resultsDictionary!["photos"] as! NSDictionary
-      let photosReceived = photosContainer["photo"] as! [NSDictionary]
-      
-      let flickrPhotos : [FlickrPhoto] = photosReceived.map {
-        photoDictionary in
+    
+    
+    NSURLSession().dataTaskWithRequest(searchRequest) { (data, response, error) in
+        if error != nil {
+            completion(results: nil,error: error)
+            return
+        }
         
-        let photoID = photoDictionary["id"] as? String ?? ""
-        let farm = photoDictionary["farm"] as? Int ?? 0
-        let server = photoDictionary["server"] as? String ?? ""
-        let secret = photoDictionary["secret"] as? String ?? ""
-        
-        let flickrPhoto = FlickrPhoto(photoID: photoID, farm: farm, server: server, secret: secret)
-        
-        let imageData = NSData(contentsOfURL: flickrPhoto.flickrImageURL())
-        flickrPhoto.thumbnail = UIImage(data: imageData!)
-        
-        return flickrPhoto
-      }
-      
-      dispatch_async(dispatch_get_main_queue(), {
-        completion(results:FlickrSearchResults(searchTerm: searchTerm, searchResults: flickrPhotos), error: nil)
-      })
+        do {
+            let resultsDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as? NSDictionary
+            
+            switch (resultsDictionary!["stat"] as! String) {
+            case "ok":
+                print("Results processed OK")
+            case "fail":
+                let APIError = NSError(domain: "FlickrSearch", code: 0, userInfo: [NSLocalizedFailureReasonErrorKey:resultsDictionary!["message"]!])
+                completion(results: nil, error: APIError)
+                return
+            default:
+                let APIError = NSError(domain: "FlickrSearch", code: 0, userInfo: [NSLocalizedFailureReasonErrorKey:"Uknown API response"])
+                completion(results: nil, error: APIError)
+                return
+            }
+            
+            let photosContainer = resultsDictionary!["photos"] as! NSDictionary
+            let photosReceived = photosContainer["photo"] as! [NSDictionary]
+            
+            let flickrPhotos : [FlickrPhoto] = photosReceived.map {
+                photoDictionary in
+                
+                let photoID = photoDictionary["id"] as? String ?? ""
+                let farm = photoDictionary["farm"] as? Int ?? 0
+                let server = photoDictionary["server"] as? String ?? ""
+                let secret = photoDictionary["secret"] as? String ?? ""
+                
+                let flickrPhoto = FlickrPhoto(photoID: photoID, farm: farm, server: server, secret: secret)
+                
+                let imageData = NSData(contentsOfURL: flickrPhoto.flickrImageURL())
+                flickrPhoto.thumbnail = UIImage(data: imageData!)
+                
+                return flickrPhoto
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), {
+                completion(results:FlickrSearchResults(searchTerm: searchTerm, searchResults: flickrPhotos), error: nil)
+            })
+            
+        } catch let error as NSError {
+            print(error.localizedDescription, error.userInfo)
+            completion(results: nil, error: error)
+            return
+            }
+        }
     }
-  }
   
   private func flickrSearchURLForSearchTerm(searchTerm:String) -> NSURL {
     
-    let escapedTerm = searchTerm.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+    let escapedTerm = searchTerm.stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())
     let URLString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(apiKey)&text=\(escapedTerm)&per_page=20&format=json&nojsoncallback=1"
     return NSURL(string: URLString)!
   }
