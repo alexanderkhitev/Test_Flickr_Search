@@ -9,9 +9,6 @@
 import Foundation
 import UIKit
 
-let apiKey = "a1df8f5c713b4afa7d44ca6d099d3da0"
-let apiSecret = "845ccfea135687e6"
-
 struct FlickrSearchResults {
   let searchTerm : String
   let searchResults : [FlickrPhoto]
@@ -82,41 +79,44 @@ func == (lhs: FlickrPhoto, rhs: FlickrPhoto) -> Bool {
 }
 
 class Flickr {
+    let apiKey = "a1df8f5c713b4afa7d44ca6d099d3da0"
+    let apiSecret = "845ccfea135687e6"
+
   
-  let processingQueue = NSOperationQueue()
+    let processingQueue = NSOperationQueue()
   
-  func searchFlickrForTerm(searchTerm: String, completion : (results: FlickrSearchResults?, error : NSError?) -> Void){
+    func searchFlickrForTerm(searchTerm: String, completion : (results: FlickrSearchResults?, error : NSError?) -> Void){
     
-    let searchURL = flickrSearchURLForSearchTerm(searchTerm)
-    let searchRequest = NSURLRequest(URL: searchURL)
+        let searchURL = flickrSearchURLForSearchTerm(searchTerm)
+        let searchRequest = NSURLRequest(URL: searchURL)
     
     
-    NSURLSession().dataTaskWithRequest(searchRequest) { (data, response, error) in
-        if error != nil {
-            completion(results: nil,error: error)
-            return
-        }
-        
-        do {
-            let resultsDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as? NSDictionary
-            
-            switch (resultsDictionary!["stat"] as! String) {
-            case "ok":
-                print("Results processed OK")
-            case "fail":
-                let APIError = NSError(domain: "FlickrSearch", code: 0, userInfo: [NSLocalizedFailureReasonErrorKey:resultsDictionary!["message"]!])
-                completion(results: nil, error: APIError)
-                return
-            default:
-                let APIError = NSError(domain: "FlickrSearch", code: 0, userInfo: [NSLocalizedFailureReasonErrorKey:"Uknown API response"])
-                completion(results: nil, error: APIError)
+        NSURLSession().dataTaskWithRequest(searchRequest) { (data, response, error) in
+            if error != nil {
+                completion(results: nil,error: error)
                 return
             }
+        
+            do {
+                let resultsDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as? NSDictionary
             
-            let photosContainer = resultsDictionary!["photos"] as! NSDictionary
-            let photosReceived = photosContainer["photo"] as! [NSDictionary]
+                switch (resultsDictionary!["stat"] as! String) {
+                    case "ok":
+                        print("Results processed OK")
+                    case "fail":
+                        let APIError = NSError(domain: "FlickrSearch", code: 0, userInfo: [NSLocalizedFailureReasonErrorKey:resultsDictionary!["message"]!])
+                        completion(results: nil, error: APIError)
+                    return
+                default:
+                    let APIError = NSError(domain: "FlickrSearch", code: 0, userInfo: [NSLocalizedFailureReasonErrorKey:"Uknown API response"])
+                    completion(results: nil, error: APIError)
+                    return
+                }
             
-            let flickrPhotos : [FlickrPhoto] = photosReceived.map {
+                let photosContainer = resultsDictionary!["photos"] as! NSDictionary
+                let photosReceived = photosContainer["photo"] as! [NSDictionary]
+            
+                let flickrPhotos : [FlickrPhoto] = photosReceived.map {
                 photoDictionary in
                 
                 let photoID = photoDictionary["id"] as? String ?? ""
@@ -150,6 +150,5 @@ class Flickr {
     let URLString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(apiKey)&text=\(escapedTerm)&per_page=20&format=json&nojsoncallback=1"
     return NSURL(string: URLString)!
   }
-  
   
 }
