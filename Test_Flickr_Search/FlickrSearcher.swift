@@ -9,7 +9,8 @@
 import Foundation
 import UIKit
 
-let apiKey = "32036da6f917a5a5bf879ce5ba1b6863"
+let apiKey = "a1df8f5c713b4afa7d44ca6d099d3da0"
+let apiSecret = "845ccfea135687e6"
 
 struct FlickrSearchResults {
   let searchTerm : String
@@ -38,23 +39,19 @@ class FlickrPhoto : Equatable {
   func loadLargeImage(completion: (flickrPhoto:FlickrPhoto, error: NSError?) -> Void) {
     let loadURL = flickrImageURL("b")
     let loadRequest = NSURLRequest(URL:loadURL)
-    NSURLConnection.sendAsynchronousRequest(loadRequest,
-      queue: NSOperationQueue.mainQueue()) {
-        response, data, error in
-        
-        if error != nil {
-          completion(flickrPhoto: self, error: error)
-          return
+    
+    NSURLSession().dataTaskWithRequest(loadRequest) { (data, response, error) in
+        if error == nil {
+            if data != nil {
+                let returnedImage = UIImage(data: data!)
+                self.largeImage = returnedImage
+                completion(flickrPhoto: self, error: nil)
+                return
+            }
+        } else {
+            completion(flickrPhoto: self, error: error)
+            return
         }
-        
-        if data != nil {
-          let returnedImage = UIImage(data: data!)
-          self.largeImage = returnedImage
-          completion(flickrPhoto: self, error: nil)
-          return
-        }
-        
-        completion(flickrPhoto: self, error: nil)
     }
   }
   
