@@ -7,7 +7,8 @@
 //
 
 import UIKit
-
+import Foundation
+import MBProgressHUD
 
 class FlickrCollectionViewController: UICollectionViewController, UITextFieldDelegate {
     
@@ -15,6 +16,7 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
     private var sizeAfterRotation: CGSize!
     private var flicrkResults = [FlickrSearchResults]()
     private let flicrk = Flickr()
+    private var progress: MBProgressHUD!
     // MARK: - IBOutlets
     @IBOutlet weak var searchTextField: UITextField! {
         didSet {
@@ -114,10 +116,13 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
     
     // MARK: - functions
     private func search(text: String) {
+        progress = MBProgressHUD.showHUDAddedTo(collectionView, animated: true)
+        progress.removeFromSuperViewOnHide = true
         flicrk.searchFlickrForTerm(text) { (results, error) in
             if error == nil {
                 if results != nil {
                     self.flicrkResults.append(results!)
+                    self.progress.hide(true)
                     self.collectionView?.reloadData()
                 }
             } else {
