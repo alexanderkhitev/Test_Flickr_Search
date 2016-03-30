@@ -79,9 +79,9 @@ func == (lhs: FlickrPhoto, rhs: FlickrPhoto) -> Bool {
 }
 
 class Flickr {
+    
     let apiKey = "a1df8f5c713b4afa7d44ca6d099d3da0"
     let apiSecret = "845ccfea135687e6"
-
   
     let processingQueue = NSOperationQueue()
   
@@ -145,7 +145,6 @@ class Flickr {
     }
   
   private func flickrSearchURLForSearchTerm(searchTerm:String) -> NSURL {
-    
     let escapedTerm = searchTerm.stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())
     let URLString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(apiKey)&text=\(escapedTerm)&per_page=20&format=json&nojsoncallback=1"
     return NSURL(string: URLString)!
