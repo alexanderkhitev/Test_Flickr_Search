@@ -115,7 +115,11 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
     // MARK: - functions
     private func search(text: String) {
         flicrk.searchFlickrForTerm(text) { (results, error) in
-            
+            if error == nil {
+                print(results)
+            } else {
+                print(error?.localizedDescription, error?.userInfo)
+            }
         }
     }
     
@@ -124,6 +128,7 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
         if textField.text != "" {
             search(textField.text!)
         }
+        textField.text = nil
         textField.resignFirstResponder()
         return true
     }
