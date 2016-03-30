@@ -10,4 +10,7 @@ import UIKit
 
 class FlickrCollectionViewCell: UICollectionViewCell {
     
+    // MARK: - IBOutlet 
+    @IBOutlet weak var flickrImageView: UIImageView!
+    
 }

@@ -12,9 +12,8 @@ import UIKit
 class FlickrCollectionViewController: UICollectionViewController, UITextFieldDelegate {
     
     // MARK: - var and let
-    private let reuseIdentifier = "FlickrCell"
     private var sizeAfterRotation: CGSize!
-    private var searchResults = [FlickrSearchResults]()
+    private var flicrkResults = [FlickrSearchResults]()
     private let flicrk = Flickr()
     // MARK: - IBOutlets
     @IBOutlet weak var searchTextField: UITextField! {
@@ -61,20 +60,22 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
     // MARK: UICollectionViewDataSource
 
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+        return flicrkResults.count ?? 0
     }
 
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
-        return 0
+        return flicrkResults[section].searchResults.count ?? 0
     }
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath)
+        let reuseIdentifier = "FlickrCell"
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! FlickrCollectionViewCell
     
         // Configure the cell
+//        let results = flicrkResults[indexPath.row]
+//        print(results.searchResults.count)
+//        cell.flickrImageView.image = currentImage.thumbnail
     
         return cell
     }
@@ -116,7 +117,10 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
     private func search(text: String) {
         flicrk.searchFlickrForTerm(text) { (results, error) in
             if error == nil {
-                print(results)
+                if results != nil {
+                    self.flicrkResults.append(results!)
+                    self.collectionView?.reloadData()
+                }
             } else {
                 print(error?.localizedDescription, error?.userInfo)
             }
