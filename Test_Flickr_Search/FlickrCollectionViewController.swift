@@ -75,14 +75,22 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! FlickrCollectionViewCell
     
         // Configure the cell
-        let results = flicrkResults[indexPath.section].searchResults
-        let currentImage = results[indexPath.row]
+        let currentImage = flicrkResults[indexPath.section].searchResults[indexPath.row]
         cell.flickrImageView!.image = currentImage.thumbnail
+        cell.layer.cornerRadius = 25
         return cell
     }
 
     // MARK: UICollectionViewDelegate
 
+    override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        let selectedImage = flicrkResults[indexPath.section].searchResults[indexPath.row]
+        print(selectedImage.photoID)
+        
+        let controller = UIUtility.mainStoryboard.instantiateViewControllerWithIdentifier("MapViewController") as! MapViewController
+        showViewController(controller, sender: self)
+    }
+    
     /*
     // Uncomment this method to specify if the specified item should be highlighted during tracking
     override func collectionView(collectionView: UICollectionView, shouldHighlightItemAtIndexPath indexPath: NSIndexPath) -> Bool {
@@ -144,7 +152,7 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
     
 }
 
-// 
+// MARK: - UICollectionViewDelegateFlowLayout functions
 
 extension FlickrCollectionViewController: UICollectionViewDelegateFlowLayout {
     
@@ -163,6 +171,5 @@ extension FlickrCollectionViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
         return 8
-
     }
 }

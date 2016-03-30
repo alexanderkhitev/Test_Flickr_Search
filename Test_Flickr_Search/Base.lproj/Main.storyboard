@@ -61,11 +61,44 @@
                     </navigationItem>
                     <connections>
                         <outlet property="searchTextField" destination="IP8-Co-qko" id="o6M-Gg-ijz"/>
+                        <segue destination="AZg-ow-1Xf" kind="show" identifier="ShowImaeOnMap" id="PZn-nj-urJ"/>
                     </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7P2-wy-M0i" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1708" y="283"/>
+        </scene>
+        <!--Map View Controller-->
+        <scene sceneID="ikZ-Rf-E8M">
+            <objects>
+                <viewController storyboardIdentifier="MapViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="AZg-ow-1Xf" customClass="MapViewController" customModule="Test_Flickr_Search" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="EiC-bn-lQf"/>
+                        <viewControllerLayoutGuide type="bottom" id="cFt-KS-FAx"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="ygo-gg-igM">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="AAc-mu-yuk">
+                                <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                            </mapView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="AAc-mu-yuk" firstAttribute="leading" secondItem="ygo-gg-igM" secondAttribute="leading" id="ATP-j4-G0K"/>
+                            <constraint firstAttribute="trailing" secondItem="AAc-mu-yuk" secondAttribute="trailing" id="LGq-QQ-hw9"/>
+                            <constraint firstItem="AAc-mu-yuk" firstAttribute="top" secondItem="EiC-bn-lQf" secondAttribute="bottom" id="PF5-Tf-XbQ"/>
+                            <constraint firstItem="cFt-KS-FAx" firstAttribute="top" secondItem="AAc-mu-yuk" secondAttribute="bottom" id="wEW-Om-uUW"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="mapView" destination="AAc-mu-yuk" id="8qs-2r-UYb"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xCL-YW-8Hk" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2488" y="283"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="7SN-aD-Nkl">

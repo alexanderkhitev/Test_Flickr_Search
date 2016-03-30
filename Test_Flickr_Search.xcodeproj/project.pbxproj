@@ -17,7 +17,9 @@
 		A67FF2F81CA6E001009E743C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A67FF2F61CA6E001009E743C /* LaunchScreen.storyboard */; };
 		A67FF3031CA6E001009E743C /* Test_Flickr_SearchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67FF3021CA6E001009E743C /* Test_Flickr_SearchUITests.swift */; };
 		A67FF3141CA6E1FA009E743C /* FlickrSearcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67FF3131CA6E1FA009E743C /* FlickrSearcher.swift */; };
+		A68CDCEC1CABE0E5007C6458 /* UIUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A68CDCEB1CABE0E5007C6458 /* UIUtility.swift */; };
 		A6B6A1691CABD880003E7EC8 /* Bridge.m in Sources */ = {isa = PBXBuildFile; fileRef = A6B6A1681CABD880003E7EC8 /* Bridge.m */; };
+		A6B6A16B1CABE000003E7EC8 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B6A16A1CABE000003E7EC8 /* MapViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,8 +48,10 @@
 		A67FF3021CA6E001009E743C /* Test_Flickr_SearchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test_Flickr_SearchUITests.swift; sourceTree = "<group>"; };
 		A67FF3041CA6E001009E743C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A67FF3131CA6E1FA009E743C /* FlickrSearcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlickrSearcher.swift; sourceTree = "<group>"; };
+		A68CDCEB1CABE0E5007C6458 /* UIUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIUtility.swift; sourceTree = "<group>"; };
 		A6B6A1671CABD880003E7EC8 /* Test_Flickr_Search-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Test_Flickr_Search-Bridging-Header.h"; sourceTree = "<group>"; };
 		A6B6A1681CABD880003E7EC8 /* Bridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Bridge.m; sourceTree = "<group>"; };
+		A6B6A16A1CABE000003E7EC8 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		FEC88F4F31023D4E09D70240 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -106,6 +110,7 @@
 				A63FF0851CA95F9B00D9C5A0 /* Cells */,
 				A67FF30D1CA6E16D009E743C /* Managers */,
 				A67FF30F1CA6E18E009E743C /* Interface */,
+				A68CDCEA1CABE0D3007C6458 /* Utility */,
 				A67FF3101CA6E19A009E743C /* Resource */,
 				A67FF3111CA6E1CC009E743C /* CoreData */,
 				A67FF3121CA6E1DD009E743C /* Info */,
@@ -135,6 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				A63FF0861CA9601E00D9C5A0 /* FlickrCollectionViewController.swift */,
+				A6B6A16A1CABE000003E7EC8 /* MapViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -170,6 +176,14 @@
 				A67FF2F91CA6E001009E743C /* Info.plist */,
 			);
 			name = Info;
+			sourceTree = "<group>";
+		};
+		A68CDCEA1CABE0D3007C6458 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				A68CDCEB1CABE0E5007C6458 /* UIUtility.swift */,
+			);
+			name = Utility;
 			sourceTree = "<group>";
 		};
 		A6B6A1661CABD861003E7EC8 /* ObjcBridge */ = {
@@ -354,8 +368,10 @@
 				A67FF2F31CA6E001009E743C /* Test_Flickr_Search.xcdatamodeld in Sources */,
 				A63FF0871CA9601E00D9C5A0 /* FlickrCollectionViewController.swift in Sources */,
 				A67FF2EB1CA6E001009E743C /* AppDelegate.swift in Sources */,
+				A68CDCEC1CABE0E5007C6458 /* UIUtility.swift in Sources */,
 				A6B6A1691CABD880003E7EC8 /* Bridge.m in Sources */,
 				A67FF3141CA6E1FA009E743C /* FlickrSearcher.swift in Sources */,
+				A6B6A16B1CABE000003E7EC8 /* MapViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

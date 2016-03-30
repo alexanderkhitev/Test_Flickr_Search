@@ -90,9 +90,8 @@ class Flickr {
         let searchURL = flickrSearchURLForSearchTerm(searchTerm)
         let searchRequest = NSURLRequest(URL: searchURL)
     
-        print(searchURL)
-//        let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
-         NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration()).dataTaskWithRequest(searchRequest) { (data, response, error) in
+        let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
+        session.dataTaskWithRequest(searchRequest) { (data, response, error) in
             if error != nil {
                 print(error?.localizedDescription)
                 completion(results: nil,error: error)
