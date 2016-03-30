@@ -9,7 +9,7 @@
 import UIKit
 
 
-class FlickrCollectionViewController: UICollectionViewController {
+class FlickrCollectionViewController: UICollectionViewController, UITextFieldDelegate {
     
     // MARK: - var and let
     private let reuseIdentifier = "FlickrCell"
@@ -17,6 +17,11 @@ class FlickrCollectionViewController: UICollectionViewController {
     private var searchResults = [FlickrSearchResults]()
     private let flicrk = Flickr()
     // MARK: - IBOutlets
+    @IBOutlet weak var searchTextField: UITextField! {
+        didSet {
+            searchTextField.delegate = self
+        }
+    }
     
     // MARK: - Lificycle
 
@@ -42,10 +47,6 @@ class FlickrCollectionViewController: UICollectionViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-    // MARK: - IBActions
-    
-    // MARK: - functions
 
     /*
     // MARK: - Navigation
@@ -108,7 +109,26 @@ class FlickrCollectionViewController: UICollectionViewController {
     
     }
     */
+    
+    // MARK: - IBActions
+    
+    // MARK: - functions
+    private func search(text: String) {
+        flicrk.searchFlickrForTerm(text) { (results, error) in
+            
+        }
+    }
+    
+    // MARK: - TextFieldDelegate's functions
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        if textField.text != "" {
+            search(textField.text!)
+        }
+        textField.resignFirstResponder()
+        return true
+    }
 
+    
 }
 
 // 
