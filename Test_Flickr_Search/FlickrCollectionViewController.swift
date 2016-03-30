@@ -152,14 +152,17 @@ extension FlickrCollectionViewController: UICollectionViewDelegateFlowLayout {
         var sizeValue: CGFloat!
         if sizeAfterRotation == nil {
             sizeValue = collectionView.frame.width
-            return CGSize(width: sizeValue, height: sizeValue)
+            let sizeWidth = sizeValue / 2 - 8
+            return CGSize(width: sizeWidth, height: sizeValue / 2)
         } else {
             sizeValue = sizeAfterRotation.width
-            return CGSize(width: sizeValue, height: sizeValue / 2)
+            let sizeWidth = sizeValue / 2 - 8
+            return CGSize(width: sizeWidth, height: sizeValue / 2)
         }
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
         return 8
+
     }
 }
