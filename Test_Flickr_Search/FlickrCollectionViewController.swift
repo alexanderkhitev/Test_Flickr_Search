@@ -73,10 +73,9 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! FlickrCollectionViewCell
     
         // Configure the cell
-//        let results = flicrkResults[indexPath.row]
-//        print(results.searchResults.count)
-//        cell.flickrImageView.image = currentImage.thumbnail
-    
+        let results = flicrkResults[indexPath.section].searchResults
+        let currentImage = results[indexPath.row]
+        cell.flickrImageView!.image = currentImage.thumbnail
         return cell
     }
 
