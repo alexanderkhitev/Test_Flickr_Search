@@ -9,6 +9,8 @@
 import UIKit
 import Foundation
 import Alamofire
+import Sync
+import DATAStack
 
 struct FlickrSearchResults {
   let searchTerm : String
@@ -30,7 +32,8 @@ class FlickrPhoto : Equatable {
     self.secret = secret
   }
   
-  func flickrImageURL(size:String = "m") -> NSURL {
+    // change m to b
+  func flickrImageURL(size:String = "b") -> NSURL {
     return NSURL(string: "http://farm\(farm).staticflickr.com/\(server)/\(photoID)_\(secret)_\(size).jpg")!
   }
   
@@ -81,10 +84,12 @@ func == (lhs: FlickrPhoto, rhs: FlickrPhoto) -> Bool {
 
 class Flickr {
     
+    // MARK: - var and let
     private static let apiKey = "a1df8f5c713b4afa7d44ca6d099d3da0"
-    let apiSecret = "845ccfea135687e6"
-  
-    let processingQueue = NSOperationQueue()
+    private let apiSecret = "845ccfea135687e6"
+    private let processingQueue = NSOperationQueue()
+    private let appDelegate = (UIApplication.sharedApplication().delegate as! AppDelegate)
+    // MARK: - functions
   
     func searchFlickrForTerm(searchTerm: String, completion : (results: FlickrSearchResults?, error : NSError?) -> Void){
     
@@ -100,12 +105,12 @@ class Flickr {
             }
         
             do {
-                let resultsDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as? NSDictionary
-                switch (resultsDictionary!["stat"] as! String) {
+                guard let resultsDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as? [String : AnyObject] else { return }
+                switch (resultsDictionary["stat"] as! String) {
                     case "ok":
                         print("Results processed OK")
                     case "fail":
-                        let APIError = NSError(domain: "FlickrSearch", code: 0, userInfo: [NSLocalizedFailureReasonErrorKey:resultsDictionary!["message"]!])
+                        let APIError = NSError(domain: "FlickrSearch", code: 0, userInfo: [NSLocalizedFailureReasonErrorKey:resultsDictionary["message"]!])
                         completion(results: nil, error: APIError)
                     return
                 default:
@@ -114,8 +119,8 @@ class Flickr {
                     return
                 }
             
-                let photosContainer = resultsDictionary!["photos"] as! NSDictionary
-                let photosReceived = photosContainer["photo"] as! [NSDictionary]
+                let photosContainer = resultsDictionary["photos"] as! [String : AnyObject]
+                let photosReceived = photosContainer["photo"] as! [[String : AnyObject]]
             
                 let flickrPhotos : [FlickrPhoto] = photosReceived.map {
                 photoDictionary in
@@ -126,7 +131,7 @@ class Flickr {
                 let secret = photoDictionary["secret"] as? String ?? ""
                 
                 let flickrPhoto = FlickrPhoto(photoID: photoID, farm: farm, server: server, secret: secret)
-                
+                print(flickrPhoto.flickrImageURL())
                 let imageData = NSData(contentsOfURL: flickrPhoto.flickrImageURL())
                 flickrPhoto.thumbnail = UIImage(data: imageData!)
                 
@@ -152,7 +157,6 @@ class Flickr {
     let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(Flickr.apiKey)&text=\(escapedTerm)&has_geo=1&geo_context=&per_page=20&format=json&nojsoncallback=1"
     return NSURL(string: urlString)!
   }
-//  https://api.flickr.com/services/rest/?method=flickr.photos.geo.getLocation&api_key=e66494310341e1cb935fd11b8ade8bfb&photo_id=26079761541&format=json&nojsoncallback=1&api_sig=c96611f5f63fee99cbf4edbc26b91a12
     
     static func flickrGetImageLocation(index: String, completion: ((CoordinateEntity) -> ())) {
         let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.geo.getLocation&api_key=\(apiKey)&photo_id=\(index)&format=json&nojsoncallback=1"
@@ -173,6 +177,18 @@ class Flickr {
                 }
             } else {
                 print(result.error?.localizedDescription, result.error?.userInfo)
+            }
+        }
+    }
+    
+    // MARK: - saving functions
+    private func saveData(data: [[String : AnyObject]]) {
+        let dataStack = appDelegate.dataStack
+        Sync.changes(data, inEntityNamed: "PhotoEntity", dataStack: dataStack) { (error) in
+            if error != nil {
+                print(error?.localizedDescription, error?.userInfo)
+            } else {
+                print("Save is successful")
             }
         }
     }
