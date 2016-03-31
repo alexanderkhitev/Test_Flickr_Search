@@ -103,15 +103,16 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
     
     // MARK: - functions
     private func search(text: String) {
+        collectionView?.userInteractionEnabled = false
         flicrk.removeOldImages()
-        progress = MBProgressHUD.showHUDAddedTo(collectionView, animated: true)
+        progress = MBProgressHUD.showHUDAddedTo(view, animated: true)
         progress.removeFromSuperViewOnHide = true
         flicrk.delegate = self
         flicrk.searchFlickrForTerm(text) { (results, error) in
             if error == nil {
                 if results != nil {
                     self.progress.hide(true)
-                    self.collectionView?.reloadData()
+                    self.collectionView?.userInteractionEnabled = true
                 }
             } else {
                 print(error?.localizedDescription, error?.userInfo)
