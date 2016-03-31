@@ -101,7 +101,6 @@ class Flickr {
         
             do {
                 let resultsDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as? NSDictionary
-            
                 switch (resultsDictionary!["stat"] as! String) {
                     case "ok":
                         print("Results processed OK")

@@ -88,45 +88,12 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
         print(selectedImage.photoID)
         
         let controller = UIUtility.mainStoryboard.instantiateViewControllerWithIdentifier("MapViewController") as! MapViewController
-        
-//        Flickr.flickrGetImageLocation(selectedImage.photoID) { 
-//            self.showViewController(controller, sender: self)
-//        }
-  
+
         Flickr.flickrGetImageLocation(selectedImage.photoID) { (coordinate) in
             controller.coordinate = coordinate
             self.showViewController(controller, sender: self)
         }
     }
-    
-    /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(collectionView: UICollectionView, shouldHighlightItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(collectionView: UICollectionView, shouldShowMenuForItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return false
-    }
-
-    override func collectionView(collectionView: UICollectionView, canPerformAction action: Selector, forItemAtIndexPath indexPath: NSIndexPath, withSender sender: AnyObject?) -> Bool {
-        return false
-    }
-
-    override func collectionView(collectionView: UICollectionView, performAction action: Selector, forItemAtIndexPath indexPath: NSIndexPath, withSender sender: AnyObject?) {
-    
-    }
-    */
     
     // MARK: - IBActions
     
@@ -134,6 +101,7 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
     private func search(text: String) {
         progress = MBProgressHUD.showHUDAddedTo(collectionView, animated: true)
         progress.removeFromSuperViewOnHide = true
+        flicrkResults.removeAll()
         flicrk.searchFlickrForTerm(text) { (results, error) in
             if error == nil {
                 if results != nil {

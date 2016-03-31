@@ -1,13 +1,38 @@
 PODS:
   - Alamofire (3.3.0)
+  - DATAFilter (0.9.1):
+    - DATAObjectIDs (~> 0.5.1)
+  - DATAObjectIDs (0.5.1)
+  - DATAStack (4.2.1)
   - MBProgressHUD (0.9.2)
+  - NSDictionary-ANDYSafeValue (0.3.1)
+  - NSEntityDescription-SYNCPrimaryKey (0.1.2):
+    - NSString-HYPNetworking (~> 0.4.0)
+  - NSManagedObject-HYPPropertyMapper (3.4.2):
+    - NSString-HYPNetworking (~> 0.4.0)
+  - NSString-HYPNetworking (0.4.0)
+  - Sync (1.5.3):
+    - DATAFilter (~> 0.9.1)
+    - DATAStack (~> 4.2.1)
+    - NSDictionary-ANDYSafeValue (~> 0.3.1)
+    - NSEntityDescription-SYNCPrimaryKey (~> 0.1.2)
+    - NSManagedObject-HYPPropertyMapper (~> 3.4.2)
 
 DEPENDENCIES:
   - Alamofire (~> 3.0)
   - MBProgressHUD (~> 0.9.2)
+  - Sync
 
 SPEC CHECKSUMS:
   Alamofire: 9054db4a1b1ca9e363223183e01cea380159a27c
+  DATAFilter: 4a1bdc065847e19d9fa1c9dd92ed2d85847967a1
+  DATAObjectIDs: 33db74dd1c858c2d22a45a4013c95f1082182e4e
+  DATAStack: 38009d8509307fca8c5bb26bca149e2e601fc369
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
+  NSDictionary-ANDYSafeValue: 2d7adf339b6e302d71fec5f1d71ae00aacda993e
+  NSEntityDescription-SYNCPrimaryKey: 9a2b2f7b838913eb445f20cc2f2edca7281fcfa5
+  NSManagedObject-HYPPropertyMapper: 9f3dd46e4265d7f6ba1ce0039ce1fc28524e9937
+  NSString-HYPNetworking: 24c3828eebde8a37cc16101a475934a56ac820c0
+  Sync: 1fb4de318b13d3297162ac5ae9cba9011145cf0b
 
 COCOAPODS: 0.38.2

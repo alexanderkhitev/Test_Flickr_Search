@@ -53,9 +53,25 @@ code_sign_if_enabled() {
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework 'Pods/Alamofire.framework'
+  install_framework 'Pods/DATAFilter.framework'
+  install_framework 'Pods/DATAObjectIDs.framework'
+  install_framework 'Pods/DATAStack.framework'
   install_framework 'Pods/MBProgressHUD.framework'
+  install_framework 'Pods/NSDictionary_ANDYSafeValue.framework'
+  install_framework 'Pods/NSEntityDescription_SYNCPrimaryKey.framework'
+  install_framework 'Pods/NSManagedObject_HYPPropertyMapper.framework'
+  install_framework 'Pods/NSString_HYPNetworking.framework'
+  install_framework 'Pods/Sync.framework'
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework 'Pods/Alamofire.framework'
+  install_framework 'Pods/DATAFilter.framework'
+  install_framework 'Pods/DATAObjectIDs.framework'
+  install_framework 'Pods/DATAStack.framework'
   install_framework 'Pods/MBProgressHUD.framework'
+  install_framework 'Pods/NSDictionary_ANDYSafeValue.framework'
+  install_framework 'Pods/NSEntityDescription_SYNCPrimaryKey.framework'
+  install_framework 'Pods/NSManagedObject_HYPPropertyMapper.framework'
+  install_framework 'Pods/NSString_HYPNetworking.framework'
+  install_framework 'Pods/Sync.framework'
 fi
