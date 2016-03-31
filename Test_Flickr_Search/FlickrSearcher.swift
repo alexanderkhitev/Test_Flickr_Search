@@ -147,8 +147,9 @@ class Flickr {
   
   private func flickrSearchURLForSearchTerm(searchTerm: String) -> NSURL {
     let escapedTerm = searchTerm.stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())!
-    let URLString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(apiKey)&text=\(escapedTerm)&per_page=20&format=json&nojsoncallback=1"
-    return NSURL(string: URLString)!
+//    let URLString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(apiKey)&text=\(escapedTerm)&per_page=20&format=json&nojsoncallback=1"
+    let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(apiKey)&has_geo=&geo_context=&format=json&nojsoncallback=1&api_sig=2ae6da221094f96cb733b106d90f0f82"
+    return NSURL(string: urlString)!
   }
   
 }
