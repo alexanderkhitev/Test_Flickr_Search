@@ -11,11 +11,10 @@ import Foundation
 import MBProgressHUD
 import CoreData
 
-class FlickrCollectionViewController: UICollectionViewController, UITextFieldDelegate, NSFetchedResultsControllerDelegate {
+class FlickrCollectionViewController: UICollectionViewController, UITextFieldDelegate, NSFetchedResultsControllerDelegate, FlickrDelegate {
     
     // MARK: - var and let
     private var sizeAfterRotation: CGSize!
-    private var flicrkResults = [FlickrSearchResults]()
     private let flicrk = Flickr()
     private var progress: MBProgressHUD!
     private var fetchedResultsController: NSFetchedResultsController!
@@ -67,12 +66,12 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
     // MARK: UICollectionViewDataSource
 
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        return flicrkResults.count ?? 0
+        return 1 ?? 0
     }
 
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return flicrkResults[section].searchResults.count ?? 0
+        return images.count ?? 0
     }
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -80,8 +79,9 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! FlickrCollectionViewCell
     
         // Configure the cell
-        let currentImage = flicrkResults[indexPath.section].searchResults[indexPath.row]
-        cell.flickrImageView!.image = currentImage.thumbnail
+        let imageEntity = images[indexPath.row]
+        let image = UIImage(data: imageEntity.imageData!)
+        cell.flickrImageView!.image = image
         cell.layer.cornerRadius = 25
         return cell
     }
@@ -89,28 +89,26 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
     // MARK: UICollectionViewDelegate
 
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        let selectedImage = flicrkResults[indexPath.section].searchResults[indexPath.row]
-        print(selectedImage.photoID)
-        
+        let selectedImage = images[indexPath.row]
         let controller = UIUtility.mainStoryboard.instantiateViewControllerWithIdentifier("MapViewController") as! MapViewController
-
-        Flickr.flickrGetImageLocation(selectedImage.photoID) { (coordinate) in
-            controller.coordinate = coordinate
-            self.showViewController(controller, sender: self)
-        }
+        guard let latitude = selectedImage.latitude as? Double else { return }
+        guard let longitude = selectedImage.longitude as? Double else { return }
+        let coordinate = CoordinateEntity(latitude: latitude, longitude: longitude)
+        controller.coordinate = coordinate
+        showViewController(controller, sender: self)
     }
     
     // MARK: - IBActions
     
     // MARK: - functions
     private func search(text: String) {
+        flicrk.removeOldImages()
         progress = MBProgressHUD.showHUDAddedTo(collectionView, animated: true)
         progress.removeFromSuperViewOnHide = true
-        flicrkResults.removeAll()
+        flicrk.delegate = self
         flicrk.searchFlickrForTerm(text) { (results, error) in
             if error == nil {
                 if results != nil {
-                    self.flicrkResults.append(results!)
                     self.progress.hide(true)
                     self.collectionView?.reloadData()
                 }
@@ -152,6 +150,10 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
         return fetchRequest
     }
     
+    // MARK: - flickr delegate
+    func flickrDidLoadData() {
+        collectionView?.reloadData()
+    }
     
 }
 

@@ -81,6 +81,10 @@ func == (lhs: FlickrPhoto, rhs: FlickrPhoto) -> Bool {
   return lhs.photoID == rhs.photoID
 }
 
+@objc protocol FlickrDelegate {
+    optional func flickrDidLoadData()
+}
+
 class Flickr {
     
     // MARK: - var and let
@@ -88,6 +92,7 @@ class Flickr {
     private let apiSecret = "845ccfea135687e6"
     private let processingQueue = NSOperationQueue()
     private let appDelegate = (UIApplication.sharedApplication().delegate as! AppDelegate)
+    weak var delegate: FlickrDelegate?
     // MARK: - functions
   
     func searchFlickrForTerm(searchTerm: String, completion : (results: FlickrSearchResults?, error : NSError?) -> Void){
@@ -140,6 +145,7 @@ class Flickr {
             
             dispatch_async(dispatch_get_main_queue(), {
                 completion(results:FlickrSearchResults(searchTerm: searchTerm, searchResults: flickrPhotos), error: nil)
+                self.delegate?.flickrDidLoadData?()
             })
             
         } catch let error as NSError {
@@ -210,7 +216,6 @@ class Flickr {
     private func save(imageData: NSData, imageIndex: String, coordinate: CoordinateEntity) {
         let managedObjectContext = appDelegate.managedObjectContext
         let imageEntity = NSEntityDescription.insertNewObjectForEntityForName("ImageEntity", inManagedObjectContext: managedObjectContext) as! ImageEntity
-        print("save data", coordinate.latitude)
         
         imageEntity.imageData = imageData
         imageEntity.index = Int(imageIndex)
@@ -221,5 +226,34 @@ class Flickr {
         } catch let error as NSError {
             print(error.localizedDescription, error.userInfo)
         }
+    }
+    
+    func removeOldImages() {
+        let managedObjectContext = appDelegate.managedObjectContext
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest(), managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        do {
+            try fetchedResultsController.performFetch()
+        } catch let error as NSError {
+            print(error.localizedDescription, error.userInfo)
+        }
+        
+        fetchedResultsController.fetchedObjects?.forEach({ (object) in
+            managedObjectContext.deleteObject(object as! NSManagedObject)
+            do {
+                try managedObjectContext.save()
+            } catch let error as NSError {
+                print(error.localizedDescription, error.userInfo)
+            }
+        })
+        
+//        let imageEntity = NSEntityDescription.insertNewObjectForEntityForName("ImageEntity", inManagedObjectContext: managedObjectContext) as! ImageEntity
+        
+    }
+    
+    private func fetchRequest() -> NSFetchRequest {
+        let fetchRequest = NSFetchRequest(entityName: "ImageEntity")
+        let sortDescriptor = NSSortDescriptor(key: "index", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        return fetchRequest
     }
 }
