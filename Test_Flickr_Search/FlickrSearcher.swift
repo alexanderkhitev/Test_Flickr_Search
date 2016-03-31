@@ -9,8 +9,6 @@
 import UIKit
 import Foundation
 import Alamofire
-import Sync
-import DATAStack
 
 struct FlickrSearchResults {
   let searchTerm : String
@@ -149,14 +147,14 @@ class Flickr {
             }
         }.resume()
     }
-  
-  private func flickrSearchURLForSearchTerm(searchTerm: String) -> NSURL {
-    let escapedTerm = searchTerm.stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())!
-//    let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(apiKey)&text=\(escapedTerm)&per_page=20&format=json&nojsoncallback=1"
     
-    let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(Flickr.apiKey)&text=\(escapedTerm)&has_geo=1&geo_context=&per_page=20&format=json&nojsoncallback=1"
-    return NSURL(string: urlString)!
-  }
+    private func flickrSearchURLForSearchTerm(searchTerm: String) -> NSURL {
+        let escapedTerm = searchTerm.stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())!
+    //    let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(apiKey)&text=\(escapedTerm)&per_page=20&format=json&nojsoncallback=1"
+    
+        let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(Flickr.apiKey)&text=\(escapedTerm)&has_geo=1&geo_context=&per_page=20&format=json&nojsoncallback=1"
+        return NSURL(string: urlString)!
+    }
     
     static func flickrGetImageLocation(index: String, completion: ((CoordinateEntity) -> ())) {
         let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.geo.getLocation&api_key=\(apiKey)&photo_id=\(index)&format=json&nojsoncallback=1"
@@ -182,14 +180,5 @@ class Flickr {
     }
     
     // MARK: - saving functions
-    private func saveData(data: [[String : AnyObject]]) {
-        let dataStack = appDelegate.dataStack
-        Sync.changes(data, inEntityNamed: "PhotoEntity", dataStack: dataStack) { (error) in
-            if error != nil {
-                print(error?.localizedDescription, error?.userInfo)
-            } else {
-                print("Save is successful")
-            }
-        }
-    }
+
 }
