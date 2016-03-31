@@ -96,7 +96,7 @@ class Flickr {
     // MARK: - functions
   
     func searchFlickrForTerm(searchTerm: String, completion : (results: FlickrSearchResults?, error : NSError?) -> Void){
-    
+        index = 0
         let searchURL = flickrSearchURLForSearchTerm(searchTerm)
         let searchRequest = NSURLRequest(URL: searchURL)
         let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
@@ -143,7 +143,7 @@ class Flickr {
             
             dispatch_async(dispatch_get_main_queue(), {
                 completion(results:FlickrSearchResults(searchTerm: searchTerm, searchResults: flickrPhotos), error: nil)
-                self.delegate?.flickrDidLoadData!()
+//                self.delegate?.flickrDidLoadData!()
             })
             
         } catch let error as NSError {
@@ -221,6 +221,11 @@ class Flickr {
         imageEntity.longitude = coordinate.longitude
         do {
             try managedObjectContext.save()
+            index += 1
+            print(index)
+            if index == 20 {
+                self.delegate?.flickrDidLoadData!()
+            }
         } catch let error as NSError {
             print(error.localizedDescription, error.userInfo)
         }
