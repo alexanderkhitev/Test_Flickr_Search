@@ -13,6 +13,7 @@ import MapKit
 class MapViewController: UIViewController, MKMapViewDelegate {
     
     // MARK: - var and let 
+    var coordinate: CoordinateEntity!
     
     // MARK: - IBOutlet 
     @IBOutlet weak var mapView: MKMapView!
@@ -21,7 +22,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         super.viewDidLoad()
         self.definesPresentationContext = true
         mapSetting()
-        print("map view controller")
+        print("map view controller", coordinate.latitude, coordinate.longitude)
         // Do any additional setup after loading the view.
     }
 
@@ -38,6 +39,15 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         mapView.showsCompass = true
         mapView.showsTraffic = true
         mapView.showsBuildings = true
+        
+        let locationCoordinate = CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        
+        let camera = MKMapCamera()
+        camera.centerCoordinate = locationCoordinate
+        
+        mapView.setCamera(camera, animated: true)
+        
+        
     }
 
     /*

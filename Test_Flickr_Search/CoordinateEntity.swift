@@ -10,8 +10,8 @@ import Foundation
 import CoreLocation
 
 public class CoordinateEntity {
-    public var latitude: Double!
-    public var longitude: Double!
+    public var latitude = Double()
+    public var longitude = Double()
     
     convenience init(latitude: Double, longitude: Double) {
         self.init()

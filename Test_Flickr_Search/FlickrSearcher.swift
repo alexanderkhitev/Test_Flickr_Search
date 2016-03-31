@@ -155,7 +155,7 @@ class Flickr {
   }
 //  https://api.flickr.com/services/rest/?method=flickr.photos.geo.getLocation&api_key=e66494310341e1cb935fd11b8ade8bfb&photo_id=26079761541&format=json&nojsoncallback=1&api_sig=c96611f5f63fee99cbf4edbc26b91a12
     
-    static func flickrGetImageLocation(index: String, completion: (() -> ())) {
+    static func flickrGetImageLocation(index: String, completion: ((CoordinateEntity) -> ())) {
         let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.geo.getLocation&api_key=\(apiKey)&photo_id=\(index)&format=json&nojsoncallback=1"
         Alamofire.request(.GET, urlString).responseJSON { (response) in
             let result = response.result
@@ -164,13 +164,11 @@ class Flickr {
                     guard let dictionary = result.value as? [String : AnyObject] else { return }
                     guard let photo = dictionary["photo"] as? [String : AnyObject] else { return }
                     guard let location = photo["location"] as? [String : AnyObject] else { return }
-                    print("there")
-                    guard let latitude = location["latitude"] as? Float else { return }
-                    print("no")
-                    guard let longitude = location["longitude"] as? Double else { return }
-                    print(latitude, longitude)
-//                    let coordinate = CoordinateEntity(latitude: latitude, longitude: longitude)
-                    completion()
+                    print(location)
+                    guard let latitude = location["latitude"] as? String else { return }
+                    guard let longitude = location["longitude"] as? String else { return }
+                    let coordinateLocation = CoordinateEntity(latitude: Double(latitude)!, longitude: Double(longitude)!)
+                    completion(coordinateLocation)
                 } else {
                     print("result is Failure")
                 }
