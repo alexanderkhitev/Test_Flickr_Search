@@ -152,6 +152,7 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
     
     // MARK: - flickr delegate
     func flickrDidLoadData() {
+        fetchedResultsControllerLoadData()
         collectionView?.reloadData()
     }
     

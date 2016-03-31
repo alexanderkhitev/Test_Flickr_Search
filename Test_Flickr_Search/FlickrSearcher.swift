@@ -145,7 +145,7 @@ class Flickr {
             
             dispatch_async(dispatch_get_main_queue(), {
                 completion(results:FlickrSearchResults(searchTerm: searchTerm, searchResults: flickrPhotos), error: nil)
-                self.delegate?.flickrDidLoadData?()
+                self.delegate?.flickrDidLoadData!()
             })
             
         } catch let error as NSError {
