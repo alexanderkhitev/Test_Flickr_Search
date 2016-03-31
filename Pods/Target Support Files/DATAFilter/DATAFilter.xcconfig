@@ -1,1 +1,0 @@
-DATAFILTER_OTHER_LDFLAGS = -framework "CoreData" -framework "Foundation"

@@ -1,1 +1,0 @@
-NSDICTIONARY_ANDYSAFEVALUE_OTHER_LDFLAGS = -framework "Foundation"

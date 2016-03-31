@@ -4,4 +4,3 @@ use_frameworks!
 
 pod 'MBProgressHUD', '~> 0.9.2'
 pod 'Alamofire', '~> 3.0'
-pod 'Sync'
