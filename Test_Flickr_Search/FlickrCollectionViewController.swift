@@ -88,6 +88,7 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
         print(selectedImage.photoID)
         
         let controller = UIUtility.mainStoryboard.instantiateViewControllerWithIdentifier("MapViewController") as! MapViewController
+        Flickr.flickrGetImageLocation(selectedImage.photoID)
         showViewController(controller, sender: self)
     }
     

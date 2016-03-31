@@ -6,8 +6,9 @@
 //  Copyright (c) 2014 Razeware. All rights reserved.
 //
 
-import Foundation
 import UIKit
+import Foundation
+import Alamofire
 
 struct FlickrSearchResults {
   let searchTerm : String
@@ -80,7 +81,7 @@ func == (lhs: FlickrPhoto, rhs: FlickrPhoto) -> Bool {
 
 class Flickr {
     
-    let apiKey = "a1df8f5c713b4afa7d44ca6d099d3da0"
+    private static let apiKey = "a1df8f5c713b4afa7d44ca6d099d3da0"
     let apiSecret = "845ccfea135687e6"
   
     let processingQueue = NSOperationQueue()
@@ -149,8 +150,24 @@ class Flickr {
     let escapedTerm = searchTerm.stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())!
 //    let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(apiKey)&text=\(escapedTerm)&per_page=20&format=json&nojsoncallback=1"
     
-    let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(apiKey)&text=\(escapedTerm)&has_geo=1&geo_context=&per_page=20&format=json&nojsoncallback=1"
+    let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(Flickr.apiKey)&text=\(escapedTerm)&has_geo=1&geo_context=&per_page=20&format=json&nojsoncallback=1"
     return NSURL(string: urlString)!
   }
-  
+//  https://api.flickr.com/services/rest/?method=flickr.photos.geo.getLocation&api_key=e66494310341e1cb935fd11b8ade8bfb&photo_id=26079761541&format=json&nojsoncallback=1&api_sig=c96611f5f63fee99cbf4edbc26b91a12
+    
+    static func flickrGetImageLocation(index: String) {
+        let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.geo.getLocation&api_key=\(apiKey)&photo_id=\(index)&format=json&nojsoncallback=1"
+        Alamofire.request(.GET, urlString).responseJSON { (response) in
+            let result = response.result
+            if result.error == nil {
+                if result.isSuccess {
+                    print(result.value)
+                } else {
+                    print("result is Failure")
+                }
+            } else {
+                print(result.error?.localizedDescription, result.error?.userInfo)
+            }
+        }
+    }
 }

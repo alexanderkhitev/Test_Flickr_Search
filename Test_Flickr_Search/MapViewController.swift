@@ -21,6 +21,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         super.viewDidLoad()
         self.definesPresentationContext = true
         mapSetting()
+        print("map view controller")
         // Do any additional setup after loading the view.
     }
 
