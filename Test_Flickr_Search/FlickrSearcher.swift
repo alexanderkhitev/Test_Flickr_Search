@@ -197,7 +197,6 @@ class Flickr {
                     guard let dictionary = result.value as? [String : AnyObject] else { return }
                     guard let photo = dictionary["photo"] as? [String : AnyObject] else { return }
                     guard let location = photo["location"] as? [String : AnyObject] else { return }
-                    print(location)
                     guard let latitude = location["latitude"] as? String else { return }
                     guard let longitude = location["longitude"] as? String else { return }
                     coordinateLocation = CoordinateEntity(latitude: Double(latitude)!, longitude: Double(longitude)!)
