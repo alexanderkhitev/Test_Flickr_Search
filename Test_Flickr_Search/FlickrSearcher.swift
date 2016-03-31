@@ -9,6 +9,7 @@
 import UIKit
 import Foundation
 import Alamofire
+import CoreData
 
 struct FlickrSearchResults {
   let searchTerm : String
@@ -130,9 +131,10 @@ class Flickr {
                 
                 let flickrPhoto = FlickrPhoto(photoID: photoID, farm: farm, server: server, secret: secret)
                 print(flickrPhoto.flickrImageURL())
-                let imageData = NSData(contentsOfURL: flickrPhoto.flickrImageURL())
-                flickrPhoto.thumbnail = UIImage(data: imageData!)
+                let imageData = NSData(contentsOfURL: flickrPhoto.flickrImageURL())!
+                flickrPhoto.thumbnail = UIImage(data: imageData)
                 
+                    self.saveData(imageData, index: flickrPhoto.photoID)
                 return flickrPhoto
             }
             
@@ -179,6 +181,45 @@ class Flickr {
         }
     }
     
+    private func saveData(imageData: NSData, index: String) {
+        let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.geo.getLocation&api_key=\(Flickr.apiKey)&photo_id=\(index)&format=json&nojsoncallback=1"
+        var coordinateLocation: CoordinateEntity!
+        Alamofire.request(.GET, urlString).responseJSON { (response) in
+            let result = response.result
+            if result.error == nil {
+                if result.isSuccess {
+                    guard let dictionary = result.value as? [String : AnyObject] else { return }
+                    guard let photo = dictionary["photo"] as? [String : AnyObject] else { return }
+                    guard let location = photo["location"] as? [String : AnyObject] else { return }
+                    print(location)
+                    guard let latitude = location["latitude"] as? String else { return }
+                    guard let longitude = location["longitude"] as? String else { return }
+                    coordinateLocation = CoordinateEntity(latitude: Double(latitude)!, longitude: Double(longitude)!)
+                    print("coordinate", coordinateLocation.latitude)
+                    self.save(imageData, imageIndex: index, coordinate: coordinateLocation)
+                } else {
+                    print("result is Failure")
+                }
+            } else {
+                print(result.error?.localizedDescription, result.error?.userInfo)
+            }
+        }
+    }
+    
     // MARK: - saving functions
-
+    private func save(imageData: NSData, imageIndex: String, coordinate: CoordinateEntity) {
+        let managedObjectContext = appDelegate.managedObjectContext
+        let imageEntity = NSEntityDescription.insertNewObjectForEntityForName("ImageEntity", inManagedObjectContext: managedObjectContext) as! ImageEntity
+        print("save data", coordinate.latitude)
+        
+        imageEntity.imageData = imageData
+        imageEntity.index = Int(imageIndex)
+        imageEntity.latitude = coordinate.latitude
+        imageEntity.longitude = coordinate.longitude
+        do {
+            try managedObjectContext.save()
+        } catch let error as NSError {
+            print(error.localizedDescription, error.userInfo)
+        }
+    }
 }

@@ -1,5 +1,5 @@
 //
-//  PhotoEntity.swift
+//  ImageEntity.swift
 //  Test_Flickr_Search
 //
 //  Created by Alexsander  on 3/31/16.
@@ -9,8 +9,8 @@
 import Foundation
 import CoreData
 
-@objc(PhotoEntity)
-class PhotoEntity: NSManagedObject {
+@objc(ImageEntity)
+class ImageEntity: NSManagedObject {
 
 // Insert code here to add functionality to your managed object subclass
 

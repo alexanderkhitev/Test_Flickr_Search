@@ -9,14 +9,18 @@
 import UIKit
 import Foundation
 import MBProgressHUD
+import CoreData
 
-class FlickrCollectionViewController: UICollectionViewController, UITextFieldDelegate {
+class FlickrCollectionViewController: UICollectionViewController, UITextFieldDelegate, NSFetchedResultsControllerDelegate {
     
     // MARK: - var and let
     private var sizeAfterRotation: CGSize!
     private var flicrkResults = [FlickrSearchResults]()
     private let flicrk = Flickr()
     private var progress: MBProgressHUD!
+    private var fetchedResultsController: NSFetchedResultsController!
+    private let appDelegate = (UIApplication.sharedApplication().delegate as! AppDelegate)
+    private var images = [ImageEntity]()
     // MARK: - IBOutlets
     @IBOutlet weak var searchTextField: UITextField! {
         didSet {
@@ -29,6 +33,7 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
     override func viewDidLoad() {
         super.viewDidLoad()
         self.definesPresentationContext = true
+        fetchedResultsControllerLoadData()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -125,6 +130,28 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
         return true
     }
 
+    // MARK: - model functions
+    private func fetchedResultsControllerLoadData() {
+        let managedObjectContext = appDelegate.managedObjectContext
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest(), managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        fetchedResultsController.delegate = self
+        do {
+            try fetchedResultsController.performFetch()
+        } catch let error as NSError {
+            print(error.localizedDescription, error.userInfo)
+        }
+        images = fetchedResultsController.fetchedObjects as! [ImageEntity]
+        collectionView?.reloadData()
+        print(images.count)
+    }
+    
+    private func fetchRequest() -> NSFetchRequest {
+        let fetchRequest = NSFetchRequest(entityName: "ImageEntity")
+        let sortDescriptor = NSSortDescriptor(key: "index", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        return fetchRequest
+    }
+    
     
 }
 
