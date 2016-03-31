@@ -99,7 +99,6 @@ class Flickr {
     
         let searchURL = flickrSearchURLForSearchTerm(searchTerm)
         let searchRequest = NSURLRequest(URL: searchURL)
-        print(searchURL)
         let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
         session.dataTaskWithRequest(searchRequest) { (data, response, error) in
             if error != nil {
@@ -135,17 +134,16 @@ class Flickr {
                 let secret = photoDictionary["secret"] as? String ?? ""
                 
                 let flickrPhoto = FlickrPhoto(photoID: photoID, farm: farm, server: server, secret: secret)
-                print(flickrPhoto.flickrImageURL())
                 let imageData = NSData(contentsOfURL: flickrPhoto.flickrImageURL())!
                 flickrPhoto.thumbnail = UIImage(data: imageData)
-                
+                    print("call save data")
                     self.saveData(imageData, index: flickrPhoto.photoID)
                 return flickrPhoto
             }
             
             dispatch_async(dispatch_get_main_queue(), {
                 completion(results:FlickrSearchResults(searchTerm: searchTerm, searchResults: flickrPhotos), error: nil)
-                self.delegate?.flickrDidLoadData!()
+//                self.delegate?.flickrDidLoadData!()
             })
             
         } catch let error as NSError {
@@ -164,28 +162,28 @@ class Flickr {
         return NSURL(string: urlString)!
     }
     
-    static func flickrGetImageLocation(index: String, completion: ((CoordinateEntity) -> ())) {
-        let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.geo.getLocation&api_key=\(apiKey)&photo_id=\(index)&format=json&nojsoncallback=1"
-        Alamofire.request(.GET, urlString).responseJSON { (response) in
-            let result = response.result
-            if result.error == nil {
-                if result.isSuccess {
-                    guard let dictionary = result.value as? [String : AnyObject] else { return }
-                    guard let photo = dictionary["photo"] as? [String : AnyObject] else { return }
-                    guard let location = photo["location"] as? [String : AnyObject] else { return }
-                    print(location)
-                    guard let latitude = location["latitude"] as? String else { return }
-                    guard let longitude = location["longitude"] as? String else { return }
-                    let coordinateLocation = CoordinateEntity(latitude: Double(latitude)!, longitude: Double(longitude)!)
-                    completion(coordinateLocation)
-                } else {
-                    print("result is Failure")
-                }
-            } else {
-                print(result.error?.localizedDescription, result.error?.userInfo)
-            }
-        }
-    }
+//    static func flickrGetImageLocation(index: String, completion: ((CoordinateEntity) -> ())) {
+//        let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.geo.getLocation&api_key=\(apiKey)&photo_id=\(index)&format=json&nojsoncallback=1"
+//        Alamofire.request(.GET, urlString).responseJSON { (response) in
+//            let result = response.result
+//            if result.error == nil {
+//                if result.isSuccess {
+//                    guard let dictionary = result.value as? [String : AnyObject] else { return }
+//                    guard let photo = dictionary["photo"] as? [String : AnyObject] else { return }
+//                    guard let location = photo["location"] as? [String : AnyObject] else { return }
+//                    print(location)
+//                    guard let latitude = location["latitude"] as? String else { return }
+//                    guard let longitude = location["longitude"] as? String else { return }
+//                    let coordinateLocation = CoordinateEntity(latitude: Double(latitude)!, longitude: Double(longitude)!)
+//                    completion(coordinateLocation)
+//                } else {
+//                    print("result is Failure")
+//                }
+//            } else {
+//                print(result.error?.localizedDescription, result.error?.userInfo)
+//            }
+//        }
+//    }
     
     private func saveData(imageData: NSData, index: String) {
         let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.geo.getLocation&api_key=\(Flickr.apiKey)&photo_id=\(index)&format=json&nojsoncallback=1"
@@ -200,7 +198,7 @@ class Flickr {
                     guard let latitude = location["latitude"] as? String else { return }
                     guard let longitude = location["longitude"] as? String else { return }
                     coordinateLocation = CoordinateEntity(latitude: Double(latitude)!, longitude: Double(longitude)!)
-                    print("coordinate", coordinateLocation.latitude)
+                    print("call save")
                     self.save(imageData, imageIndex: index, coordinate: coordinateLocation)
                 } else {
                     print("result is Failure")
@@ -212,6 +210,7 @@ class Flickr {
     }
     
     // MARK: - saving functions
+    private var index = 0
     private func save(imageData: NSData, imageIndex: String, coordinate: CoordinateEntity) {
         let managedObjectContext = appDelegate.managedObjectContext
         let imageEntity = NSEntityDescription.insertNewObjectForEntityForName("ImageEntity", inManagedObjectContext: managedObjectContext) as! ImageEntity
@@ -222,6 +221,10 @@ class Flickr {
         imageEntity.longitude = coordinate.longitude
         do {
             try managedObjectContext.save()
+            index += 1
+            if index == 20 {
+                self.delegate?.flickrDidLoadData?()
+            }
         } catch let error as NSError {
             print(error.localizedDescription, error.userInfo)
         }
@@ -244,9 +247,6 @@ class Flickr {
                 print(error.localizedDescription, error.userInfo)
             }
         })
-        
-//        let imageEntity = NSEntityDescription.insertNewObjectForEntityForName("ImageEntity", inManagedObjectContext: managedObjectContext) as! ImageEntity
-        
     }
     
     private func fetchRequest() -> NSFetchRequest {

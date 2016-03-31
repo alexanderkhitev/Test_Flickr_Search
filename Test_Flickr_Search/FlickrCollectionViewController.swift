@@ -89,6 +89,7 @@ class FlickrCollectionViewController: UICollectionViewController, UITextFieldDel
     // MARK: UICollectionViewDelegate
 
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        searchTextField.resignFirstResponder()
         let selectedImage = images[indexPath.row]
         let controller = UIUtility.mainStoryboard.instantiateViewControllerWithIdentifier("MapViewController") as! MapViewController
         guard let latitude = selectedImage.latitude as? Double else { return }
