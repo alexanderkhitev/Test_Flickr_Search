@@ -92,6 +92,7 @@ class Flickr {
     private let apiSecret = "845ccfea135687e6"
     private let processingQueue = NSOperationQueue()
     private let appDelegate = (UIApplication.sharedApplication().delegate as! AppDelegate)
+    private var index = 0
     weak var delegate: FlickrDelegate?
     // MARK: - functions
   
@@ -210,7 +211,6 @@ class Flickr {
     }
     
     // MARK: - saving functions
-    private var index = 0
     private func save(imageData: NSData, imageIndex: String, coordinate: CoordinateEntity) {
         let managedObjectContext = appDelegate.managedObjectContext
         let imageEntity = NSEntityDescription.insertNewObjectForEntityForName("ImageEntity", inManagedObjectContext: managedObjectContext) as! ImageEntity
