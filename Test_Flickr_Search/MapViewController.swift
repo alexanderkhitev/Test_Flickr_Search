@@ -18,6 +18,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     // MARK: - IBOutlet 
     @IBOutlet weak var mapView: MKMapView!
 
+    // MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         self.definesPresentationContext = true
@@ -34,7 +35,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     // MARK: - Functions
     private func mapSetting() {
         mapView.delegate = self
-        mapView.mapType = .SatelliteFlyover
+        mapView.mapType = .Standard
         mapView.showsScale = true
         mapView.showsCompass = true
         mapView.showsTraffic = true
@@ -42,12 +43,13 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         
         let locationCoordinate = CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
         
+        let point = MKPointAnnotation()
+        point.coordinate = locationCoordinate
+        mapView.addAnnotation(point)
+        
         let camera = MKMapCamera()
         camera.centerCoordinate = locationCoordinate
-        
         mapView.setCamera(camera, animated: true)
-        
-        
     }
 
     /*
